@@ -1,0 +1,10 @@
+// //global icons
+
+.edit-icon {
+  @include icon-size();
+  content: url('../../images/edit.svg') !important;
+}
+.delete-icon {
+  @include icon-size();
+  content: url('../../images/delete.svg') !important;
+}
