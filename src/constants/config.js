@@ -5,7 +5,6 @@ export const AppConfig = {
     transactionDetails: 'Transactions Details',
     merchantPlaceholder: 'Search by Merchant Name',
     addTransaction: 'Add Transaction',
-    transactionDetails: 'Transaction details',
     addNewTransaction: 'Add New Manual Transaction',
     editTransaction: 'Edit Transaction',
     deleteTransaction: 'Delete Transaction',
@@ -17,6 +16,7 @@ export const AppConfig = {
     enter: 'Enter',
     select: 'Select',
     submit: 'Submit',
+    update: 'Update',
     delete: 'Delete',
     credit: 'CREDIT',
     debit: 'DEBIT',
@@ -24,7 +24,13 @@ export const AppConfig = {
     itemsPerPage: 10,
     dateAndTime: 'Date & Time',
     amountKhd: 'Amount(HKD)',
-    status: 'Status'
+    status: 'Status',
+    noDataFound: 'No Data Found',
+    ok: 'Ok',
+    error: 'Something went wrong!',
+    transactionAdded: 'Transaction has been added',
+    transactionEdited: 'Transaction has been updated',
+    transactionDeleted: 'Transaction has been deleted',
 };
 
 export const tableHeader = [

@@ -1,5 +1,11 @@
-// default icon-size will be 18px by height and width
-@mixin icon-size($height: 18px, $width: 18px) {
+// default icon-size will be 15px by height and width
+@mixin icon-size($height: 15px, $width: 15px) {
   height: $height;
   width: $width;
+}
+
+@mixin flex-center() {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

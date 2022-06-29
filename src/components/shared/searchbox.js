@@ -5,7 +5,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 const SearchBox = ({placeholder, onChangeSearch}) => {
   return (
     <>
-      <InputGroup className="mb-3 w-25">
+      <InputGroup className="mb-3">
         <FormControl
           placeholder={placeholder}
           onChange={(e) => onChangeSearch(e.target.value.toLowerCase())}

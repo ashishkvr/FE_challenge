@@ -9,6 +9,7 @@ import {
 
 export const ActionTypes = {
   // FETCH
+  IS_LOADING: 'loading',
   FETCH_TRANSACTION_LIST: `fetch-transaction-data`,
   ADD_TRANSACTION: `add-transaction`,
   EDIT_TRANSACTION: `edit-transaction`,
@@ -16,6 +17,7 @@ export const ActionTypes = {
 };
 
 export const fetchTransactionTable = () => async dispatch => {
+  dispatch({ type: ActionTypes.IS_LOADING });
   const [err, response] = await to(fetchTransactionApi());
   if (err) {
     throw err;
@@ -32,6 +34,7 @@ export const addTransaction = (payload) => async dispatch => {
   }
   if(response?.status === 200) {
     dispatch({ type: ActionTypes.ADD_TRANSACTION, payload: response.data });
+    return response;
   }
 };
 
@@ -42,6 +45,7 @@ export const editTransaction = (payload, id) => async dispatch => {
   }
   if(response?.status === 200) {
     dispatch({ type: ActionTypes.EDIT_TRANSACTION, payload: response.data });
+    return response;
   }
 };
 
@@ -51,7 +55,8 @@ export const deleteTransaction = (id) => async dispatch => {
     throw err;
   }
   if(response?.status === 200) {
-    dispatch({ type: ActionTypes.DELETE_TRANSACTION, payload: response.data });
+    dispatch({ type: ActionTypes.DELETE_TRANSACTION, payload: response.data, id: id });
+    return response;
   }
 };
 

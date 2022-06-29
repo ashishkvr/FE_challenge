@@ -3,7 +3,6 @@ import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import moment from "moment";
 
 //Components
 import InputGroup from "./shared/inputGroup";
@@ -21,27 +20,31 @@ import {
 
 //Constant
 import { AppConfig } from "../constants/config";
+import { dateFormat, showToast } from "../utils/Helper";
 
 const ActionModal = ({ isShow, modalConfig, handleClose }) => {
   const [state, setState] = useState({});
   const dispatch = useDispatch();
   const { id } = useParams();
-  
+
   useEffect(() => {
-    if(modalConfig.type === 'details') {
-      dispatch(detailsTransaction(id)).then(res => setState(res))
+    if (modalConfig.type === "details") {
+      dispatch(detailsTransaction(id))
+        .then((res) => setState(res))
+        .catch((err) => {
+          showToast(err?.message ?? AppConfig.error, "error");
+        });
     }
     return () => setState({}); //clears the state at unmounting
   }, []);
-  
+
   useEffect(() => {
     if (modalConfig.data && Object.keys(modalConfig.data).length > 0) {
       setState(modalConfig.data); //set the state at edit transaction
     }
   }, [modalConfig.data]);
-  
+
   const dropdownOptions = [AppConfig.debit, AppConfig.credit];
-  const isDeleteModal = modalConfig.type === 'delete';
 
   const updateState = (e) => {
     const key = e.target.name.toLowerCase();
@@ -59,13 +62,32 @@ const ActionModal = ({ isShow, modalConfig, handleClose }) => {
     handleClose();
     switch (modalConfig.type) {
       case "add":
-        dispatch(addTransaction(state));
+        dispatch(addTransaction(state))
+          .then((res) => {
+            debugger;
+            showToast(AppConfig.transactionAdded);
+          })
+          .catch((err) => {
+            showToast(err?.message ?? AppConfig.error, "error");
+          });
         break;
       case "edit":
-        dispatch(editTransaction(state, modalConfig.id));
+        dispatch(editTransaction(state, modalConfig.id))
+          .then((res) => {
+            showToast(AppConfig.transactionEdited);
+          })
+          .catch((err) => {
+            showToast(err?.message ?? AppConfig.error, "error");
+          });
         break;
       case "delete":
-        dispatch(deleteTransaction(modalConfig.id));
+        dispatch(deleteTransaction(modalConfig.id))
+          .then((res) => {
+            showToast(AppConfig.transactionDeleted);
+          })
+          .catch((err) => {
+            showToast(err?.message ?? AppConfig.error, "error");
+          });
         break;
 
       default:
@@ -118,25 +140,28 @@ const ActionModal = ({ isShow, modalConfig, handleClose }) => {
   };
 
   const deleteModalBody = () => {
-    return (
-      <h5 className="text-center">{AppConfig.consentDelete}</h5>
-    )
-  }
+    return <h5 className="text-center ff-rg m-3">{AppConfig.consentDelete}</h5>;
+  };
 
   const detailsModalBody = () => {
     return (
       <>
-        <DetailsList title={AppConfig.dateAndTime} value={moment(state["datetime"]).format("DD MMM YYYY HH:MM")} />
-        <DetailsList title={AppConfig.merchantName} value={state['merchant'] && state['merchant']['name']} />
-        <DetailsList title={AppConfig.amountKhd} value={state['amount']} />
-        <DetailsList title={AppConfig.status} value={state['status']} />
-        <DetailsList title={AppConfig.reference} value={state['reference']} />
-        <DetailsList title={AppConfig.remarks} value={state['remarks']} />
+        <DetailsList
+          title={AppConfig.dateAndTime}
+          value={dateFormat(state["datetime"], "DD MMM YYYY HH:MM")}
+        />
+        <DetailsList
+          title={AppConfig.merchantName}
+          value={state["merchant"] && state["merchant"]["name"]}
+        />
+        <DetailsList title={AppConfig.amountKhd} value={state["amount"]} />
+        <DetailsList title={AppConfig.status} value={state["status"]} />
+        <DetailsList title={AppConfig.reference} value={state["reference"]} />
+        <DetailsList title={AppConfig.remarks} value={state["remarks"]} />
       </>
-    )
-  }
+    );
+  };
   const modalBody = () => {
-    console.log(modalConfig.type)
     switch (modalConfig.type) {
       case "add":
       case "edit":
@@ -147,23 +172,20 @@ const ActionModal = ({ isShow, modalConfig, handleClose }) => {
         return detailsModalBody();
 
       default:
-        break;
+        return handleClose();
     }
-  }
-  console.log("state", state);
+  };
 
   return (
     <>
       <Modal show={isShow} onHide={handleClose}>
         <Form onSubmit={onSubmit}>
-          <Modal.Header closeButton>
+          <Modal.Header closeButton className="ff-md">
             <Modal.Title>{modalConfig.title}</Modal.Title>
           </Modal.Header>
-          <Modal.Body>
-            {modalBody()}
-          </Modal.Body>
+          <Modal.Body>{modalBody()}</Modal.Body>
           <Modal.Footer>
-            <Button title={isDeleteModal ? AppConfig.delete : AppConfig.submit} type="submit" />
+            <Button title={modalConfig.buttonText} type="submit" />
           </Modal.Footer>
         </Form>
       </Modal>

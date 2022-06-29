@@ -10,6 +10,8 @@ import Container from "react-bootstrap/Container";
 import Transaction from "./containers/transaction";
 import TransactionDetails from "./containers/transactionDetails";
 import "./assets/scss/main.scss";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
@@ -19,14 +21,12 @@ function App() {
           <Routes>
             <Route path="/" element={<Navigate replace to="/transactions" />} />
             <Route path="/transactions" element={<Transaction />}>
-              <Route
-                path=":id"
-                element={<TransactionDetails/>}
-              />
+              <Route path=":id" element={<TransactionDetails />} />
             </Route>
           </Routes>
         </Router>
       </Container>
+      <ToastContainer icon={false} />
     </div>
   );
 }

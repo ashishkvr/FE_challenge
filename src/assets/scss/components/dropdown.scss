@@ -3,15 +3,25 @@
   justify-content: space-between;
   display: flex;
   align-items: center;
-  background-color: white;
-  color: rgb(63, 60, 60);
-  border-color: black;
+  background-color: $white;
+  color: $black1;
+  border-color: $black2;
   :hover {
-        background-color: white;
-      }
+    background-color: $white;
+  }
 }
 
-.btn-success:hover, .btn-success:active, .show > .btn-success.dropdown-toggle {
-  background-color: white;
-  color: black;
+.dropdown-item.active, .dropdown-item:active {
+  color: $black1;
+  background-color: $black-hover;
+}
+
+.dropdown {
+  .btn-primary:hover,
+  .btn-primary:active,
+  .btn-primary:active,
+  .btn-primary.dropdown-toggle {
+    background-color: $white;
+    color: $black1;
+  }
 }

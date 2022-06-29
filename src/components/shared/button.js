@@ -3,7 +3,7 @@ import Button from "react-bootstrap/Button";
 //Components
 import Image from "./image";
 
-const ButtonComponent = ({title, type="", onButtonClick, icon, altIcon }) => {
+const ButtonComponent = ({title, type="", textClass, onButtonClick, icon, altIcon }) => {
   const showIcon = () => {
     if(!icon) {
       return;
@@ -13,9 +13,9 @@ const ButtonComponent = ({title, type="", onButtonClick, icon, altIcon }) => {
 
   return (
     <>
-      <Button variant="primary" onClick={onButtonClick} type={type}>
+      <Button className="buttonClass ff-md" variant="primary" onClick={onButtonClick} type={type}>
         {showIcon()}
-        {title}
+        <span className={textClass}>{title}</span>
       </Button>
     </>
   );

@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 //actions
 import { fetchTransactionTable } from "../store/transaction/action";
@@ -12,6 +14,7 @@ import Button from "./shared/button";
 
 //Constant
 import { AppConfig } from "../constants/config";
+import { showToast } from "../utils/Helper";
 
 const Datatable = ({onShowModal}) => {
   const ITEMS_PER_PAGE = AppConfig.itemsPerPage;
@@ -24,15 +27,17 @@ const Datatable = ({onShowModal}) => {
     return a.datetime > b.datetime ? -1 : a.datetime < b.datetime ? 1 : 0;
   };
   const totalData = useSelector((state) =>
-    state.transaction.tableData.sort(sortByDateTime)
+    state.transaction
   );
 
   useEffect(() => {
-    dispatch(fetchTransactionTable());
+    dispatch(fetchTransactionTable()).catch(err => {
+      showToast(err?.message ?? AppConfig.error, "error");
+    });
   }, []);
 
   const transactionData = useMemo(() => {
-    let allData = totalData;
+    let allData = Array.isArray(totalData?.tableData) &&totalData.tableData.sort(sortByDateTime);
 
     if (searchValue.trim()) {
       setCurrentPage(1);
@@ -40,6 +45,7 @@ const Datatable = ({onShowModal}) => {
         data["merchant"]["name"].toLowerCase().includes(searchValue)
       );
     }
+    
     setFilteredData(allData);
 
     return allData.slice(
@@ -51,19 +57,25 @@ const Datatable = ({onShowModal}) => {
   const invokeModalAction = ({type, id='', rowData={}}) => {
     onShowModal(type, id, rowData);
   }
-
   return (
     <>
-      <SearchBox
-        placeholder={AppConfig.merchantPlaceholder}
-        onChangeSearch={(value) => setSearchValue(value)}
-      />
-      <Button
-        title={AppConfig.addTransaction}
-        onButtonClick={() => invokeModalAction({type: "add"})}
-        icon="edit-icon"
-        altIcon="add"
-      />
+      <Row>
+        <Col xs="4">
+          <SearchBox
+            placeholder={AppConfig.merchantPlaceholder}
+            onChangeSearch={(value) => setSearchValue(value)}
+          />
+        </Col>
+        <Col xs="8">
+          <Button
+            title={AppConfig.addTransaction}
+            onButtonClick={() => invokeModalAction({type: "add"})}
+            icon="add-icon white-filter"
+            altIcon="add"
+            textClass="pl-1"
+          />
+        </Col>
+      </Row>
       <Table data={transactionData} actionItem={(action) => invokeModalAction(action)} />
       <Pagination
         total={filteredData.length}

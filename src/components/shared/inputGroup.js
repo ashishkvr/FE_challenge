@@ -14,6 +14,7 @@ const InputGroup = ({ placeholder, name, type="", value="", onChangeInput, isReq
           name={name}
           required={isRequired}
           value={value}
+          autoComplete='off'
         />
       </Form.Group>
     </>

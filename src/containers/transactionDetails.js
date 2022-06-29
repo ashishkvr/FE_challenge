@@ -12,7 +12,7 @@ const TransactionDetails = () => {
       <ActionModal
         isShow={true}
         handleClose={() => navigate(-1)}
-        modalConfig={{ type: "details", title: AppConfig.transactionDetails }}
+        modalConfig={{ type: "details", title: AppConfig.transactionDetails, buttonText: AppConfig.ok }}
       />
     </>
   );

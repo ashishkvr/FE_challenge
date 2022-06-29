@@ -12,12 +12,13 @@ const Transaction = () => {
     setShowModal(true);
     switch (action.toLowerCase()) {
       case "add":
-        setModalConfig({ type: "add", title: AppConfig.addNewTransaction });
+        setModalConfig({ type: "add", title: AppConfig.addNewTransaction, buttonText: AppConfig.submit });
         break;
       case "edit":
         setModalConfig({
           type: "edit",
           title: AppConfig.editTransaction,
+          buttonText: AppConfig.update,
           id: itemId,
           data: itemData,
         });
@@ -26,6 +27,7 @@ const Transaction = () => {
         setModalConfig({
           type: "delete",
           title: AppConfig.deleteTransaction,
+          buttonText: AppConfig.delete,
           id: itemId,
         });
         break;
