@@ -1,6 +1,6 @@
 import React from "react";
 
-const Status = ({ value }) => {
+const Status = ({ value = "" }) => {
   const bgColor = (value) => {
     switch (value.toLowerCase()) {
       case "completed":
@@ -15,7 +15,7 @@ const Status = ({ value }) => {
   };
   return (
     <span
-      className="rounded-pill p-2 w-clr"
+      className="rounded-pill status-pill w-clr ft-14"
       style={{ backgroundColor: bgColor(value) }}
     >
       {value}

@@ -10,16 +10,20 @@ import {
 export const ActionTypes = {
   // FETCH
   IS_LOADING: 'loading',
+  IS_SPINNER: 'spinner',
   FETCH_TRANSACTION_LIST: `fetch-transaction-data`,
   ADD_TRANSACTION: `add-transaction`,
   EDIT_TRANSACTION: `edit-transaction`,
-  DELETE_TRANSACTION: `delete-transaction`
+  DELETE_TRANSACTION: `delete-transaction`,
+  // ERROR
+  ERROR_IN_TRANSACTION: 'error-transaction'
 };
 
 export const fetchTransactionTable = () => async dispatch => {
   dispatch({ type: ActionTypes.IS_LOADING });
   const [err, response] = await to(fetchTransactionApi());
   if (err) {
+    dispatch({ type: ActionTypes.ERROR_IN_TRANSACTION });
     throw err;
   }
   if(response?.status === 200) {
@@ -28,8 +32,10 @@ export const fetchTransactionTable = () => async dispatch => {
 };
 
 export const addTransaction = (payload) => async dispatch => {
+  dispatch({ type: ActionTypes.IS_SPINNER });
   const [err, response] = await to(addTransactionApi(payload));
   if (err) {
+    dispatch({ type: ActionTypes.ERROR_IN_TRANSACTION });
     throw err;
   }
   if(response?.status === 200) {
@@ -39,8 +45,10 @@ export const addTransaction = (payload) => async dispatch => {
 };
 
 export const editTransaction = (payload, id) => async dispatch => {
+  dispatch({ type: ActionTypes.IS_SPINNER });
   const [err, response] = await to(editTransactionApi(payload, id));
   if (err) {
+    dispatch({ type: ActionTypes.ERROR_IN_TRANSACTION });
     throw err;
   }
   if(response?.status === 200) {
@@ -50,8 +58,10 @@ export const editTransaction = (payload, id) => async dispatch => {
 };
 
 export const deleteTransaction = (id) => async dispatch => {
+  dispatch({ type: ActionTypes.IS_SPINNER });
   const [err, response] = await to(deleteTransactionApi(id));
   if (err) {
+    dispatch({ type: ActionTypes.ERROR_IN_TRANSACTION });
     throw err;
   }
   if(response?.status === 200) {
@@ -63,6 +73,7 @@ export const deleteTransaction = (id) => async dispatch => {
 export const detailsTransaction = (id) => async dispatch => {
   const [err, response] = await to(detailsTransactionApi(id));
   if (err) {
+    dispatch({ type: ActionTypes.ERROR_IN_TRANSACTION });
     throw err;
   }
   if(response?.status === 200) {

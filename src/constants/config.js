@@ -31,6 +31,9 @@ export const AppConfig = {
     transactionAdded: 'Transaction has been added',
     transactionEdited: 'Transaction has been updated',
     transactionDeleted: 'Transaction has been deleted',
+    validAmount: 'Please enter valid amount',
+    validMerchant: 'Please enter valid merchant name',
+    validType: 'Please enter valid type'
 };
 
 export const tableHeader = [
@@ -38,7 +41,7 @@ export const tableHeader = [
     {label: 'Merchant', value: 'merchant'},
     {label: 'Amount(HKD)', value: 'amount' },
     {label: 'Status', value: 'status'},
-    {label: 'Action'}
+    {label: ''}
 ];
 
 export const tablePlaceholder = [1, 2, 3, 4, 5];

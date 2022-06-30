@@ -1,16 +1,22 @@
 import React, { Component } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import Table from "react-bootstrap/Table";
+import { useSelector } from "react-redux";
 //Components
 import Image from "./image";
 //utils
 import { stopPropagation, dateFormat } from "../../utils/Helper";
-import { tableHeader, tablePlaceholder } from "../../constants/config";
+import {
+  AppConfig,
+  tableHeader,
+  tablePlaceholder,
+} from "../../constants/config";
 import Skeleton from "./skeleton";
 import Status from "./status";
 
 const TableContainer = ({ data, actionItem }) => {
   const navigate = useNavigate();
+  const isLoading = useSelector((state) => state.transaction.isLoading);
 
   const isManual = (status) => {
     return status.toLowerCase() === "manual";
@@ -50,31 +56,48 @@ const TableContainer = ({ data, actionItem }) => {
           </td>
           <td
             onClick={stopPropagation}
-            className={`center ${
+            className={`${
               !isManual(d["status"]) && "opacity-5 pointer-events-none"
             }`}
           >
-            <Image
-              icon="edit-icon"
-              altIcon="edit"
-              onClick={() =>
-                actionItem({ type: "edit", id: d["id"], rowData: d })
-              }
-            />
-            <Image
-              icon="delete-icon red-filter"
-              altIcon="delete"
-              onClick={() => actionItem({ type: "delete", id: d["id"] })}
-            />
+            <div className="flex-space">
+              <Image
+                icon="edit-icon"
+                dataTestId={`edit-btn-${d["id"]}`}
+                altIcon="edit"
+                onClick={() =>
+                  actionItem({ type: "edit", id: d["id"], rowData: d })
+                }
+              />
+              <Image
+                icon="delete-icon red-filter"
+                dataTestId={`delete-btn-${d["id"]}`}
+                altIcon="delete"
+                onClick={() => actionItem({ type: "delete", id: d["id"] })}
+              />
+            </div>
           </td>
         </tr>
       );
     });
   };
 
+  const noRowTable = () => {
+    if(isLoading) {
+      return;
+    }
+    return (
+      <tr>
+        <td colSpan={5} className="center ff-bl">
+          {AppConfig.noDataFound}
+        </td>
+      </tr>
+    );
+  };
+
   return (
     <>
-      <Table striped bordered hover size="sm" >
+      <Table striped bordered hover size="sm">
         <thead>
           <tr className="table-header ff-bl">
             {tableHeader &&
@@ -85,7 +108,10 @@ const TableContainer = ({ data, actionItem }) => {
               ))}
           </tr>
         </thead>
-        <tbody className="ff-rg">{data?.length ? dataBody(data) : loadSkeleton()}</tbody>
+        <tbody className="ff-rg">
+          {isLoading && loadSkeleton()}
+          {data?.length ? dataBody(data) : noRowTable()}
+        </tbody>
       </Table>
       <Outlet />
     </>

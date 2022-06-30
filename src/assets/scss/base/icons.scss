@@ -5,11 +5,11 @@
   content: url('../../images/add.svg');
 }
 .edit-icon {
-  @include icon-size(12px, 12px);
+  @include icon-size(20px, 20px);
   content: url('../../images/edit.svg');
 }
 .delete-icon {
-  @include icon-size(12px, 12px);
+  @include icon-size(20px, 20px);
   content: url('../../images/delete.svg');
 }
 .white-filter {

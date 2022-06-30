@@ -1,9 +1,9 @@
 import React from "react";
 
-const Image = ({icon, altIcon, onClick }) => {
+const Image = ({icon, altIcon, onClick, dataTestId }) => {
   return (
     <>
-      <img className={icon} alt={altIcon} onClick={onClick} />
+      <img data-testid={dataTestId} className={icon} alt={altIcon} onClick={onClick} />
     </>
   );
 };

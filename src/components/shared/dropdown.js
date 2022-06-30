@@ -2,15 +2,24 @@ import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import Form from "react-bootstrap/Form";
 
-const DropdownComponent = ({ name, placeholder, options, onChangeOption }) => {
+const DropdownComponent = ({
+  textClass,
+  name,
+  placeholder="",
+  error="",
+  options,
+  onChangeOption,
+}) => {
   return (
     <Form.Group className="mb-3">
-      <Form.Label>{name}</Form.Label>
+      <Form.Label htmlFor={name}>{name}</Form.Label>
       <Dropdown>
         <Dropdown.Toggle
           variant="primary"
-          id="dropdown-basic"
-          className="w-100 dropdown-button"
+          id={name}
+          className={`${
+            error ? "red-border" : ""
+          } ${textClass} w-100 dropdown-button`}
         >
           {placeholder}
         </Dropdown.Toggle>
@@ -23,6 +32,7 @@ const DropdownComponent = ({ name, placeholder, options, onChangeOption }) => {
           ))}
         </Dropdown.Menu>
       </Dropdown>
+      {!!error && <Form.Text className="errorText">{error}</Form.Text>}
     </Form.Group>
   );
 };

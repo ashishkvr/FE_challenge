@@ -4,9 +4,9 @@ import Col from 'react-bootstrap/Col';
 import Status from "./shared/status";
 import Skeleton from "./shared/skeleton";
 
-const DetailsList = ({title="", value=""}) => {
+const DetailsList = ({title="", value}) => {
   const detailsValue = (title) => {
-    if(!value) {
+    if(value === undefined) {
       return <Skeleton size={3} />
     }
     if(title.toLowerCase() === 'status') {

@@ -24,18 +24,24 @@ import { dateFormat, showToast } from "../utils/Helper";
 
 const ActionModal = ({ isShow, modalConfig, handleClose }) => {
   const [state, setState] = useState({});
+  const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
   const { id } = useParams();
+  const isDeleteModal = modalConfig.type.toLowerCase() === 'delete';
+  const isDetailModal = modalConfig.type.toLowerCase() === 'details';
 
   useEffect(() => {
-    if (modalConfig.type === "details") {
+    if (isDetailModal) {
       dispatch(detailsTransaction(id))
-        .then((res) => setState(res))
+        .then((res) => {setState(res)})
         .catch((err) => {
           showToast(err?.message ?? AppConfig.error, "error");
         });
     }
-    return () => setState({}); //clears the state at unmounting
+    return () => {
+      setState({});
+      setErrors({});
+    }; //clears the state at unmounting
   }, []);
 
   useEffect(() => {
@@ -47,24 +53,47 @@ const ActionModal = ({ isShow, modalConfig, handleClose }) => {
   const dropdownOptions = [AppConfig.debit, AppConfig.credit];
 
   const updateState = (e) => {
-    const key = e.target.name.toLowerCase();
+    const key = e?.target?.name.toLowerCase();
+    const errorObj = errors;
     let update = {};
     if (key === AppConfig.merchantName.toLowerCase()) {
-      update = { ["merchant"]: { ["name"]: e.target.value } };
+      update = { ["merchant"]: { ["name"]: e?.target?.value } };
+      delete errorObj?.merchant;
     } else {
-      update = { [key]: e.target.value ?? e.target.innerText };
+      update = { [key]: e?.target?.value ?? e?.target?.innerHTML };
+      delete errorObj[key];
     }
     setState({ ...state, ...update });
+    setErrors({ ...errorObj });
   };
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    handleClose();
+  const mandatoryCheck = () => {
+    if (isDeleteModal || isDetailModal) {
+      return true;
+    }
+    const errorObj = {};
+    if (!state?.amount || state?.amount <= 0 || isNaN(state?.amount)) {
+      errorObj.amount = AppConfig.validAmount;
+    }
+    if (!(state?.merchant && state.merchant?.name)) {
+      errorObj.merchant = AppConfig.validMerchant;
+    }
+    if (!state?.type) {
+      errorObj.type = AppConfig.validType;
+    }
+    setErrors(errorObj);
+    if (Object.keys(errorObj).length) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  const onSubmitActionDispatch = () => {
     switch (modalConfig.type) {
       case "add":
         dispatch(addTransaction(state))
-          .then((res) => {
-            debugger;
+          .then(() => {
             showToast(AppConfig.transactionAdded);
           })
           .catch((err) => {
@@ -73,7 +102,7 @@ const ActionModal = ({ isShow, modalConfig, handleClose }) => {
         break;
       case "edit":
         dispatch(editTransaction(state, modalConfig.id))
-          .then((res) => {
+          .then(() => {
             showToast(AppConfig.transactionEdited);
           })
           .catch((err) => {
@@ -82,7 +111,7 @@ const ActionModal = ({ isShow, modalConfig, handleClose }) => {
         break;
       case "delete":
         dispatch(deleteTransaction(modalConfig.id))
-          .then((res) => {
+          .then(() => {
             showToast(AppConfig.transactionDeleted);
           })
           .catch((err) => {
@@ -95,30 +124,38 @@ const ActionModal = ({ isShow, modalConfig, handleClose }) => {
     }
   };
 
+  const onSubmit = (e) => {
+    e.preventDefault();
+    if (mandatoryCheck()) {
+      onSubmitActionDispatch();
+      handleClose();
+    }
+  };
+
   const addEditModalBody = () => {
     return (
       <>
         <InputGroup
           name={AppConfig.amount}
           value={state["amount"]}
+          error={errors?.amount}
           placeholder={`${AppConfig.enter} ${AppConfig.amount}`}
           onChangeInput={updateState}
-          isRequired={true}
-          type="number"
         />
         <InputGroup
           name={AppConfig.merchantName}
           value={state["merchant"] && state["merchant"]["name"]}
+          error={errors?.merchant}
           placeholder={`${AppConfig.enter} ${AppConfig.merchantName}`}
           onChangeInput={updateState}
-          isRequired={true}
         />
         <Dropdown
           name={AppConfig.type}
           placeholder={state.type ?? `${AppConfig.select} ${AppConfig.type}`}
+          textClass={!state.type ? "placeholder-text" : ""}
+          error={errors?.type}
           options={dropdownOptions}
           onChangeOption={updateState}
-          isRequired={true}
         />
         <InputGroup
           name={AppConfig.reference}
@@ -161,6 +198,15 @@ const ActionModal = ({ isShow, modalConfig, handleClose }) => {
       </>
     );
   };
+
+  const disableSubmitBtn = () => {
+    if(isDeleteModal || isDetailModal) {
+      return false;
+    } else if(Object.keys(errors).length > 0){
+      return true;
+    }
+  }
+
   const modalBody = () => {
     switch (modalConfig.type) {
       case "add":
@@ -185,7 +231,11 @@ const ActionModal = ({ isShow, modalConfig, handleClose }) => {
           </Modal.Header>
           <Modal.Body>{modalBody()}</Modal.Body>
           <Modal.Footer>
-            <Button title={modalConfig.buttonText} type="submit" />
+            <Button
+              title={modalConfig.buttonText}
+              type="submit"
+              disabled={disableSubmitBtn()}
+            />
           </Modal.Footer>
         </Form>
       </Modal>

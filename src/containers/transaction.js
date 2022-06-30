@@ -6,10 +6,10 @@ import { AppConfig } from "../constants/config"
 
 const Transaction = () => {
   return (
-    <>
+    <div className="bg-color">
       <Header title={AppConfig.transactionTitle} />
       <TransactionTable />
-    </>
+    </div>
   );
 };
 
